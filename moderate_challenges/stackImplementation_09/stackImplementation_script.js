@@ -19,9 +19,54 @@ For example:
 4 -2
 
 */
+(function () {
 
-var fs = require('fs');
+  var fs = require('fs');
+  var results = [];
 
-fs.readFile(process.argv[2], {encoding: 'utf8'}, function (err, data) {
-  console.log(data);
-});
+
+  function Stack (item) {
+    this._stack = [];
+    if (item) { this.push(item); }
+  }
+
+  Stack.prototype.push = function (num) {
+    return this._stack.push(num);
+  }
+
+  Stack.prototype.pop = function (num) {
+    return this._stack.pop();
+  }
+
+  Stack.prototype.len = function () {
+    return this._stack.length;
+  }
+
+  function pushPop (line) {
+    var array = line.split(' ');
+    var results = [];
+    var stack = new Stack();
+    array.forEach(function (el) {
+      stack.push(el);
+    });
+
+    var count = 1;
+    while (stack.len() > 0) {
+      if (count++ & 1) { results.push(stack.pop()); }
+      else { stack.pop(); }
+    }
+    return results.join(' ');
+  }
+
+  /*-----------------------------------------------------------------------------
+      RUN CODE
+  -----------------------------------------------------------------------------*/
+  
+  fs.readFileSync(process.argv[2]).toString().split('\n').forEach(function (line) {
+    if (line !== '') {
+      results.push(pushPop(line));
+    }
+  });
+  console.log(results.join('\n'));
+
+})()
